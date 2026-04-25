@@ -26,10 +26,15 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 .score-value.bump{animation:bump .2s ease-out;}
 @keyframes bump{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
 .btn-mute{background:var(--panel);border:2px solid var(--border);border-radius:7px;width:28px;height:28px;font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.btn-mute.active{background:var(--accent);color:#fff7e8;border-color:var(--accent);}
+.btn-lite-text{background:var(--panel);border:2px solid var(--border);border-radius:7px;height:28px;padding:0 8px;font-family:inherit;font-size:.7rem;font-weight:700;color:var(--accent);cursor:pointer;display:flex;align-items:center;gap:1px;white-space:nowrap;}
+.btn-lite-text.active{background:var(--accent);color:#fff7e8;border-color:var(--accent);}
 .controls{display:flex;justify-content:space-between;align-items:center;}
 .hint{font-size:.6rem;color:var(--border);font-weight:500;}
 .btn-new{background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:5px 11px;font-family:'Zen Maru Gothic',sans-serif;font-size:.68rem;font-weight:700;cursor:pointer;}
 .btn-new:active{transform:scale(.95);}
+.ctrl-btns{display:flex;gap:6px;}
+.btn-rule-side{background:var(--panel);color:var(--accent);border:2px solid var(--border);}
 .board-wrap{background:var(--panel);border:3px solid var(--border);border-radius:14px;padding:8px;position:relative;overflow:hidden;flex-shrink:0;}
 @keyframes shake-left{0%{transform:translateX(0)}40%{transform:translateX(-7px)}100%{transform:translateX(0)}}
 @keyframes shake-right{0%{transform:translateX(0)}40%{transform:translateX(7px)}100%{transform:translateX(0)}}
@@ -80,6 +85,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 .zukan-title{font-family:'Kaisei Decol',serif;font-size:1.1rem;font-weight:700;color:var(--accent);}
 .zukan-close{background:var(--panel);border:2px solid var(--border);border-radius:50%;width:30px;height:30px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .zukan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:10px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.zukan-version{text-align:center;font-size:.65rem;color:#a08060;margin-top:12px;font-weight:500;letter-spacing:1px;}
 .zk-card{background:var(--panel);border-radius:10px;overflow:hidden;}
 .zk-img{width:100%;aspect-ratio:1;background-size:cover;background-position:center;position:relative;display:flex;align-items:flex-end;justify-content:center;border-bottom:3px solid #ccc;}
 .zk-num{font-weight:900;font-size:.85rem;color:#fff;margin-bottom:3px;text-shadow:-1.5px -1.5px 0 #1a0a00,1.5px -1.5px 0 #1a0a00,-1.5px 1.5px 0 #1a0a00,1.5px 1.5px 0 #1a0a00;}
@@ -99,6 +105,16 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 .zd-name{font-family:'Kaisei Decol',serif;font-size:1.2rem;font-weight:700;color:var(--accent);text-align:center;margin-bottom:6px;}
 .zd-desc{font-size:.78rem;color:var(--accent);line-height:1.6;text-align:center;}
 .zd-close{position:absolute;top:12px;right:12px;background:#fdf6ee;border:none;width:32px;height:32px;border-radius:50%;font-size:.9rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:1;}
+#rule-modal{position:fixed;inset:0;z-index:500;background:rgba(20,10,5,.85);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s;}
+#rule-modal.visible{opacity:1;pointer-events:all;}
+.rule-box{background:var(--bg);border-radius:18px;padding:22px 22px 26px;max-width:340px;width:100%;transform:scale(.9);transition:transform .25s;position:relative;}
+#rule-modal.visible .rule-box{transform:scale(1);}
+.rule-close{position:absolute;top:12px;right:12px;background:var(--panel);border:none;width:32px;height:32px;border-radius:50%;font-size:.9rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2);}
+.rule-title{font-family:'Kaisei Decol',serif;font-size:1.15rem;font-weight:700;color:var(--accent);text-align:center;margin-bottom:18px;}
+.rule-section{margin-bottom:14px;}
+.rule-section:last-child{margin-bottom:0;}
+.rule-h{font-size:.82rem;font-weight:700;color:var(--accent);margin-bottom:4px;}
+.rule-p{font-size:.75rem;color:var(--accent);line-height:1.6;padding-left:4px;}
 @keyframes unlockPop{0%{transform:scale(.8);filter:brightness(2)}50%{transform:scale(1.1);filter:brightness(1.5)}100%{transform:scale(1);filter:brightness(1)}}
 </style></head><body>
 <div id="unlock"><div class="box"><div class="em">🐄</div>
@@ -121,7 +137,28 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 <div class="zk-card"><div class="zk-img" id="zki-2048" style="border-color:#ffd700"><span class="zk-num">2048</span></div></div>
 <div class="zk-card"><div class="zk-img" id="zki-4096" style="border-color:#ff69b4"><span class="zk-num">4096</span></div></div>
 <div class="zk-card"><div class="zk-img" id="zki-8192" style="border-color:#00cfff"><span class="zk-num">8192</span></div></div>
-  </div></div></div>
+  </div>
+  <div class="zukan-version">v1.0.0</div>
+</div></div>
+
+<div id="rule-modal">
+  <div class="rule-box">
+    <button class="rule-close" id="rule-close">✕</button>
+    <div class="rule-title">📖 あそびかた</div>
+    <div class="rule-section">
+      <div class="rule-h">🐾 そうさ</div>
+      <div class="rule-p">スワイプ、または矢印キーで盤面を動かすモー！</div>
+    </div>
+    <div class="rule-section">
+      <div class="rule-h">🐄 ルール</div>
+      <div class="rule-p">同じ数字のうーちーがぶつかると合体して2倍になるモー！</div>
+    </div>
+    <div class="rule-section">
+      <div class="rule-h">🎯 もくひょう</div>
+      <div class="rule-p">2048をめざせモー！もっと先もあるモー…？</div>
+    </div>
+  </div>
+</div>
 
 <div id="zk-detail">
   <div class="zd-box">
@@ -144,6 +181,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
       </div>
     </div>
     <div class="header-right">
+      <button class="btn-lite-text" id="btn-lite" title="軽量化モード">⚡軽量化</button>
       <button class="btn-mute" id="btn-mute">🔊</button>
       <div class="scores">
         <div class="score-box"><div class="score-label">SCORE</div><div class="score-value" id="score">0</div></div>
@@ -153,7 +191,10 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
   </div>
   <div class="controls">
     <span class="hint">🐾 矢印キー or スワイプ</span>
-    <button class="btn-new" id="btn-new">あたらしいゲーム</button>
+    <div class="ctrl-btns">
+      <button class="btn-new btn-rule-side" id="btn-rule">📖ルール</button>
+      <button class="btn-new" id="btn-new">あたらしいゲーム</button>
+    </div>
   </div>
   <div class="board-wrap" id="board-wrap">
     <div class="board" id="board"></div>
@@ -218,6 +259,9 @@ function fitBoard(){
   draw();
 }
 var AC=null,muted=false;
+var lite=localStorage.getItem("u2048lite")==="1";
+function applyLite(){var b=document.getElementById("btn-lite");if(b){if(lite)b.classList.add("active");else b.classList.remove("active");}}
+applyLite();
 function initAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();}
 function unlockAC(){initAC();var b=AC.createBuffer(1,1,22050),s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);s.start(0);if(AC.state==="suspended")AC.resume();}
 function beep(freq,type,vol,dur,f0){if(muted||!AC)return;try{var o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type=type;if(f0){o.frequency.setValueAtTime(f0,AC.currentTime);o.frequency.exponentialRampToValueAtTime(freq,AC.currentTime+dur*0.3);}else o.frequency.setValueAtTime(freq,AC.currentTime);g.gain.setValueAtTime(vol,AC.currentTime);g.gain.exponentialRampToValueAtTime(0.0001,AC.currentTime+dur);o.start();o.stop(AC.currentTime+dur+0.01);}catch(e){}}
@@ -228,6 +272,10 @@ function sndOver(){var fs=[280,230,190,150];[0,120,260,440].forEach(function(t,i
 function sndWin(){[[523,0],[659,130],[784,260],[1047,420]].forEach(function(x){setTimeout(function(){beep(x[0],"triangle",0.10,0.28);},x[1]);});}
 document.getElementById("btn-unlock").addEventListener("click",function(){unlockAC();document.getElementById("unlock").style.display="none";setTimeout(function(){beep(600,"sine",0.08,0.12);},50);setTimeout(function(){beep(800,"sine",0.08,0.12);},180);});
 document.getElementById("btn-mute").addEventListener("click",function(){muted=!muted;document.getElementById("btn-mute").textContent=muted?"🔇":"🔊";});
+document.getElementById("btn-lite").addEventListener("click",function(){lite=!lite;localStorage.setItem("u2048lite",lite?"1":"0");applyLite();});
+document.getElementById("btn-rule").addEventListener("click",function(){document.getElementById("rule-modal").classList.add("visible");});
+document.getElementById("rule-close").addEventListener("click",function(){document.getElementById("rule-modal").classList.remove("visible");});
+document.getElementById("rule-modal").addEventListener("click",function(e){if(e.target===this)this.classList.remove("visible");});
 document.getElementById("title-wrap").addEventListener("click",function(){document.getElementById("zukan-modal").classList.add("visible");});
 document.getElementById("zukan-close").addEventListener("click",function(){document.getElementById("zukan-modal").classList.remove("visible");});
 document.getElementById("zukan-modal").addEventListener("click",function(e){if(e.target===this)this.classList.remove("visible");});
@@ -262,7 +310,11 @@ var PTCL=["✨","⭐","💕","🌸","🎵","🐾","🌟","🍀"];
 var activePtcl=0,PTCL_MAX=16;
 function burst(el,n){if(activePtcl>=PTCL_MAX)return;n=Math.min(n,PTCL_MAX-activePtcl);var r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;for(var i=0;i<n;i++){activePtcl++;var p=document.createElement("div");p.className="ptcl";p.textContent=PTCL[Math.floor(Math.random()*PTCL.length)];var a=Math.random()*Math.PI*2,d=30+Math.random()*50;p.style.setProperty("--tx",Math.cos(a)*d+"px");p.style.setProperty("--ty",Math.sin(a)*d-30+"px");p.style.setProperty("--d",(0.4+Math.random()*0.3)+"s");p.style.left=cx+"px";p.style.top=cy+"px";document.body.appendChild(p);setTimeout(function(){p.remove();activePtcl--;},800);}}
 var N=4,board,score,won,cont,merged,fresh,cellRects;
-function init(){board=[];for(var r=0;r<N;r++){board[r]=[];for(var c=0;c<N;c++)board[r][c]=0;}score=0;won=false;cont=false;merged={};fresh={};document.getElementById("ov-win").classList.remove("visible");document.getElementById("ov-lose").classList.remove("visible");syncScore();spawnTile();spawnTile();draw();}
+function saveState(){try{localStorage.setItem("u2048save",JSON.stringify({b:board,s:score,w:won,c:cont}));}catch(e){}}
+function clearSave(){try{localStorage.removeItem("u2048save");}catch(e){}}
+function loadState(){try{var s=localStorage.getItem("u2048save");if(!s)return false;var d=JSON.parse(s);if(!d||!d.b||d.b.length!==N)return false;board=d.b;score=d.s||0;won=!!d.w;cont=!!d.c;return true;}catch(e){return false;}}
+function newGame(){board=[];for(var r=0;r<N;r++){board[r]=[];for(var c=0;c<N;c++)board[r][c]=0;}score=0;won=false;cont=false;merged={};fresh={};document.getElementById("ov-win").classList.remove("visible");document.getElementById("ov-lose").classList.remove("visible");syncScore();spawnTile();spawnTile();draw();saveState();}
+function init(){merged={};fresh={};document.getElementById("ov-win").classList.remove("visible");document.getElementById("ov-lose").classList.remove("visible");if(loadState()){syncScore();draw();}else{newGame();}}
 function spawnTile(){var e=[];for(var r=0;r<N;r++)for(var c=0;c<N;c++)if(!board[r][c])e.push([r,c]);if(!e.length)return null;var rc=e[Math.floor(Math.random()*e.length)];board[rc[0]][rc[1]]=Math.random()<0.9?2:4;return rc;}
 function syncScore(bump){document.getElementById("score").textContent=score;if(score>best){best=score;localStorage.setItem("u2048b",best);}document.getElementById("best").textContent=best;if(bump){var s=document.getElementById("score");s.classList.remove("bump");void s.offsetWidth;s.classList.add("bump");}}
 function fs(v,w){var l=String(v).length,b=w*0.27;return l<=2?b:l===3?b*0.8:l===4?b*0.65:b*0.52;}
@@ -296,7 +348,7 @@ function draw(){
     var rect=cellRects[key];
     var isNew=!!fresh[key],isMerged=!!merged[key];
     t.style.display="";
-    t.className="tile"+(isMerged?" merged-tile":"");
+    t.className="tile"+(isMerged&&!lite?" merged-tile":"");
     // 画像と境界色は値が変化したときだけ更新（base64再パースを回避）
     if(t._v!==vk){
       if(TILE_IMGS[vk])t.style.backgroundImage="url("+TILE_IMGS[vk]+")";
@@ -305,9 +357,9 @@ function draw(){
     }
     t.style.width=rect.w+"px";t.style.height=rect.h+"px";
     t.style.left=rect.l+"px";t.style.top=rect.t+"px";
-    if(isNew){t.style.transform="scale(0)";t.style.opacity="0";newTiles.push(t);}
+    if(isNew&&!lite){t.style.transform="scale(0)";t.style.opacity="0";newTiles.push(t);}
     var num=t.firstChild;num.style.fontSize=fs(v,rect.w)+"px";if(num.textContent!=v)num.textContent=v;
-    if(isMerged)burst(t,v>=512?3:2);
+    if(isMerged&&!lite)burst(t,v>=512?3:2);
   }
   if(newTiles.length){requestAnimationFrame(function(){requestAnimationFrame(function(){newTiles.forEach(function(el){el.classList.add("new-tile");el.style.transform="";el.style.opacity="";});});});}
   merged={};fresh={};
@@ -331,13 +383,13 @@ function move(dir){
   var ar=document.getElementById("slide-arrow");
   ar.textContent={left:"←",right:"→",up:"↑",down:"↓"}[dir];
   ar.className="slide-arrow";void ar.offsetWidth;ar.classList.add("go-"+dir);
-  if(total>0){sndMerge(total);syncScore(true);showAdd(total);}else{sndSlide();syncScore(false);}
+  if(total>0){sndMerge(total);syncScore(true);if(!lite)showAdd(total);}else{sndSlide();syncScore(false);}
   var pos=spawnTile();if(pos){var nf={};nf[pos[0]*N+pos[1]]=1;fresh=nf;sndNew();}
   draw();
-  requestAnimationFrame(function(){var bw=document.getElementById("board-wrap");bw.style.animation="none";void bw.offsetWidth;bw.style.animation="shake-"+dir+" .18s ease-out";});
+  if(!lite)requestAnimationFrame(function(){var bw=document.getElementById("board-wrap");bw.style.animation="none";void bw.offsetWidth;bw.style.animation="shake-"+dir+" .18s ease-out";});
   var r2,c2,found=false;
   if(!won){for(r2=0;r2<N&&!found;r2++)for(c2=0;c2<N&&!found;c2++)if(board[r2][c2]===2048){won=true;found=true;if(!cont)(function(){setTimeout(function(){sndWin();document.getElementById("ov-win").classList.add("visible");},300);})();}}
-  if(!canMove())setTimeout(function(){sndOver();document.getElementById("ov-lose").classList.add("visible");},300);
+  if(!canMove()){clearSave();setTimeout(function(){sndOver();document.getElementById("ov-lose").classList.add("visible");},300);}else{saveState();}
 }
 function canMove(){for(var r=0;r<N;r++)for(var c=0;c<N;c++){if(!board[r][c])return true;if(c<N-1&&board[r][c]===board[r][c+1])return true;if(r<N-1&&board[r][c]===board[r+1][c])return true;}return false;}
 function showAdd(v){var el=document.createElement("div");el.className="sc-add";el.textContent="+"+v;var rr=document.getElementById("score").getBoundingClientRect();el.style.left=rr.left+"px";el.style.top=rr.top+"px";document.body.appendChild(el);setTimeout(function(){el.remove();},900);}
@@ -345,10 +397,10 @@ document.addEventListener("keydown",function(e){var m={ArrowUp:"up",ArrowDown:"d
 var sx,sy,bw2=document.getElementById("board-wrap");
 bw2.addEventListener("touchstart",function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
 bw2.addEventListener("touchend",function(e){var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)<20&&Math.abs(dy)<20)return;move(Math.abs(dx)>Math.abs(dy)?(dx>0?"right":"left"):(dy>0?"down":"up"));});
-document.getElementById("btn-new").addEventListener("click",init);
-document.getElementById("btn-restart-win").addEventListener("click",init);
-document.getElementById("btn-restart-lose").addEventListener("click",init);
-document.getElementById("btn-continue").addEventListener("click",function(){cont=true;document.getElementById("ov-win").classList.remove("visible");});
+document.getElementById("btn-new").addEventListener("click",newGame);
+document.getElementById("btn-restart-win").addEventListener("click",newGame);
+document.getElementById("btn-restart-lose").addEventListener("click",newGame);
+document.getElementById("btn-continue").addEventListener("click",function(){cont=true;document.getElementById("ov-win").classList.remove("visible");saveState();});
 window.addEventListener("resize",fitBoard);
 init();fitBoard();
 </script></body></html>
