@@ -83,14 +83,22 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 .zk-card{background:var(--panel);border-radius:10px;overflow:hidden;}
 .zk-img{width:100%;aspect-ratio:1;background-size:cover;background-position:center;position:relative;display:flex;align-items:flex-end;justify-content:center;border-bottom:3px solid #ccc;}
 .zk-num{font-weight:900;font-size:.85rem;color:#fff;margin-bottom:3px;text-shadow:-1.5px -1.5px 0 #1a0a00,1.5px -1.5px 0 #1a0a00,-1.5px 1.5px 0 #1a0a00,1.5px 1.5px 0 #1a0a00;}
-.zk-label{font-size:.55rem;font-weight:700;color:var(--accent);text-align:center;padding:4px 3px 5px;line-height:1.3;}
+.zk-card{cursor:pointer;}
+.zk-card.locked{cursor:default;}
 .zk-card.locked .zk-img{background-image:none!important;background-color:#1a0a00;border-color:#3a2a1a!important;}
 .zk-card.locked .zk-img::before{content:"？";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.6rem;font-weight:900;color:#5a4a3a;font-family:'Kaisei Decol',serif;}
 .zk-card.locked .zk-num{display:none;}
-.zk-card.locked .zk-label{color:#a08060;}
-.zk-card.locked .zk-label .zk-label-text{display:none;}
-.zk-card.locked .zk-label::before{content:"???";}
 .zk-card.just-unlocked{animation:unlockPop .6s cubic-bezier(.34,1.56,.64,1);}
+#zk-detail{position:fixed;inset:0;z-index:500;background:rgba(20,10,5,.85);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s;}
+#zk-detail.visible{opacity:1;pointer-events:all;}
+.zd-box{background:var(--bg);border-radius:18px;overflow:hidden;max-width:340px;width:100%;transform:scale(.9);transition:transform .25s;}
+#zk-detail.visible .zd-box{transform:scale(1);}
+.zd-img{width:170px;height:170px;margin:18px auto 0;border-radius:12px;background-size:cover;background-position:center;border:4px solid #ccc;position:relative;}
+.zd-num{position:absolute;bottom:6px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-family:'Kaisei Decol',serif;font-size:1.1rem;font-weight:700;padding:3px 12px;border-radius:12px;}
+.zd-info{padding:16px 20px 20px;}
+.zd-name{font-family:'Kaisei Decol',serif;font-size:1.2rem;font-weight:700;color:var(--accent);text-align:center;margin-bottom:6px;}
+.zd-desc{font-size:.78rem;color:var(--accent);line-height:1.6;text-align:center;}
+.zd-close{position:absolute;top:12px;right:12px;background:#fdf6ee;border:none;width:32px;height:32px;border-radius:50%;font-size:.9rem;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:1;}
 @keyframes unlockPop{0%{transform:scale(.8);filter:brightness(2)}50%{transform:scale(1.1);filter:brightness(1.5)}100%{transform:scale(1);filter:brightness(1)}}
 </style></head><body>
 <div id="unlock"><div class="box"><div class="em">🐄</div>
@@ -100,20 +108,31 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
   <div class="zukan-header"><div class="zukan-title">🐄 うーちー図鑑</div>
   <button class="zukan-close" id="zukan-close">✕</button></div>
   <div class="zukan-grid">
-<div class="zk-card"><div class="zk-img" id="zki-2" style="border-color:#5bc8f5"><span class="zk-num">2</span></div><div class="zk-label"><span class="zk-label-text">夕日・橋</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-4" style="border-color:#f5a623"><span class="zk-num">4</span></div><div class="zk-label"><span class="zk-label-text">お茶と一緒</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-8" style="border-color:#9b59b6"><span class="zk-num">8</span></div><div class="zk-label"><span class="zk-label-text">正面アップ</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-16" style="border-color:#2ecc71"><span class="zk-num">16</span></div><div class="zk-label"><span class="zk-label-text">お花畑</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-32" style="border-color:#e74c3c"><span class="zk-num">32</span></div><div class="zk-label"><span class="zk-label-text">飛行機バック</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-64" style="border-color:#3498db"><span class="zk-num">64</span></div><div class="zk-label"><span class="zk-label-text">海岸・岩場</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-128" style="border-color:#f1c40f"><span class="zk-num">128</span></div><div class="zk-label"><span class="zk-label-text">イルミ夜景</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-256" style="border-color:#e91e8c"><span class="zk-num">256</span></div><div class="zk-label"><span class="zk-label-text">丸っこいver</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-512" style="border-color:#1abc9c"><span class="zk-num">512</span></div><div class="zk-label"><span class="zk-label-text">夕暮れ・毛布</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-1024" style="border-color:#ff6b35"><span class="zk-num">1024</span></div><div class="zk-label"><span class="zk-label-text">フード服・車内</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-2048" style="border-color:#ffd700"><span class="zk-num">2048</span></div><div class="zk-label"><span class="zk-label-text">モノクロ</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-4096" style="border-color:#ff69b4"><span class="zk-num">4096</span></div><div class="zk-label"><span class="zk-label-text">ふたり並び</span></div></div>
-<div class="zk-card"><div class="zk-img" id="zki-8192" style="border-color:#00cfff"><span class="zk-num">8192</span></div><div class="zk-label"><span class="zk-label-text">竹林</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-2" style="border-color:#5bc8f5"><span class="zk-num">2</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-4" style="border-color:#f5a623"><span class="zk-num">4</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-8" style="border-color:#9b59b6"><span class="zk-num">8</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-16" style="border-color:#2ecc71"><span class="zk-num">16</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-32" style="border-color:#e74c3c"><span class="zk-num">32</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-64" style="border-color:#3498db"><span class="zk-num">64</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-128" style="border-color:#f1c40f"><span class="zk-num">128</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-256" style="border-color:#e91e8c"><span class="zk-num">256</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-512" style="border-color:#1abc9c"><span class="zk-num">512</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-1024" style="border-color:#ff6b35"><span class="zk-num">1024</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-2048" style="border-color:#ffd700"><span class="zk-num">2048</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-4096" style="border-color:#ff69b4"><span class="zk-num">4096</span></div></div>
+<div class="zk-card"><div class="zk-img" id="zki-8192" style="border-color:#00cfff"><span class="zk-num">8192</span></div></div>
   </div></div></div>
+
+<div id="zk-detail">
+  <div class="zd-box">
+    <button class="zd-close" id="zd-close">✕</button>
+    <div class="zd-img" id="zd-img"><div class="zd-num" id="zd-num"></div></div>
+    <div class="zd-info">
+      <div class="zd-name" id="zd-name"></div>
+      <div class="zd-desc" id="zd-desc"></div>
+    </div>
+  </div>
+</div>
 <div class="container">
   <div class="header">
     <div class="title-wrap" id="title-wrap">
@@ -216,7 +235,27 @@ var best=parseInt(localStorage.getItem("u2048b")||"0");
 document.getElementById("best").textContent=best;
 var unlocked={};try{unlocked=JSON.parse(localStorage.getItem("u2048unlocked")||"{}");}catch(e){unlocked={};}
 var ZUKAN_VALUES=[2,4,8,16,32,64,128,256,512,1024,2048,4096,8192];
+// うーちー詳細情報。後から自由に書き換え可
+var UCHIE_INFO={
+  2:{name:"夕陽うーちー",desc:"フェリーの上で潰れ顔モー！"},
+  4:{name:"和食うーちー",desc:"ご飯を待つ間のひと時だモー！"},
+  8:{name:"デカ鼻うーちー",desc:"カメラ寄りすぎだモー！"},
+  16:{name:"温室うーちー",desc:"ここは楽園かモー？"},
+  32:{name:"真面目うーちー",desc:"飛行機の博物館で勉強したモー！"},
+  64:{name:"岸壁うーちー",desc:"奥に見えるのは大島だモー！"},
+  128:{name:"魅惑うーちー",desc:"ロマンチックなイルミにときめくモー！"},
+  256:{name:"スプラッシュカウ",desc:"みんな大好き！？スプカウ！！"},
+  512:{name:"十二単うーちー",desc:"大切にしたい日本の文化モー！"},
+  1024:{name:"ピエロうーちー",desc:"玉のりくらいはしたいモー！"},
+  2048:{name:"ハードボイルドうーちー",desc:"男らしい写りに痺れたモー？"},
+  4096:{name:"小岩井コンビ",desc:"いつも仲良し！ノリノリなふたり！"},
+  8192:{name:"看病うーちー",desc:"ここまで解禁するなんてもはや病気モー！"}
+};
 function applyZukan(){ZUKAN_VALUES.forEach(function(v){var card=document.getElementById("zki-"+v);if(!card)return;var parent=card.parentElement;if(unlocked[v])parent.classList.remove("locked");else parent.classList.add("locked");});}
+function showDetail(v){if(!unlocked[v])return;var info=UCHIE_INFO[v]||{name:"???",desc:""};document.getElementById("zd-img").style.backgroundImage="url("+TILE_IMGS[v]+")";document.getElementById("zd-img").style.borderColor=TILE_BORDERS[v]||"#ccc";document.getElementById("zd-num").textContent=v;document.getElementById("zd-name").textContent=info.name;document.getElementById("zd-desc").textContent=info.desc;document.getElementById("zk-detail").classList.add("visible");}
+ZUKAN_VALUES.forEach(function(v){var card=document.getElementById("zki-"+v);if(card&&card.parentElement)card.parentElement.addEventListener("click",function(){showDetail(v);});});
+document.getElementById("zd-close").addEventListener("click",function(){document.getElementById("zk-detail").classList.remove("visible");});
+document.getElementById("zk-detail").addEventListener("click",function(e){if(e.target===this)this.classList.remove("visible");});
 function unlockTile(v){if(unlocked[v])return false;unlocked[v]=1;localStorage.setItem("u2048unlocked",JSON.stringify(unlocked));var card=document.getElementById("zki-"+v);if(card){var parent=card.parentElement;parent.classList.remove("locked");parent.classList.add("just-unlocked");setTimeout(function(){parent.classList.remove("just-unlocked");},700);}return true;}
 applyZukan();
 var PTCL=["✨","⭐","💕","🌸","🎵","🐾","🌟","🍀"];
