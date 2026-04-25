@@ -274,14 +274,13 @@ function move(dir){
   if(dir==="down")b=rotL(b);
   if(!moved)return;
   board=b;score+=total;merged=nm;
-  var bw=document.getElementById("board-wrap");
-  bw.style.animation="none";void bw.offsetWidth;bw.style.animation="shake-"+dir+" .18s ease-out";
   var ar=document.getElementById("slide-arrow");
   ar.textContent={left:"←",right:"→",up:"↑",down:"↓"}[dir];
   ar.className="slide-arrow";void ar.offsetWidth;ar.classList.add("go-"+dir);
   if(total>0){sndMerge(total);syncScore(true);showAdd(total);}else{sndSlide();syncScore(false);}
   var pos=spawnTile();if(pos){var nf={};nf[pos[0]*N+pos[1]]=1;fresh=nf;sndNew();}
   draw();
+  requestAnimationFrame(function(){var bw=document.getElementById("board-wrap");bw.style.animation="none";void bw.offsetWidth;bw.style.animation="shake-"+dir+" .18s ease-out";});
   var r2,c2,found=false;
   if(!won){for(r2=0;r2<N&&!found;r2++)for(c2=0;c2<N&&!found;c2++)if(board[r2][c2]===2048){won=true;found=true;if(!cont)(function(){setTimeout(function(){sndWin();document.getElementById("ov-win").classList.add("visible");},300);})();}}
   if(!canMove())setTimeout(function(){sndOver();document.getElementById("ov-lose").classList.add("visible");},300);
